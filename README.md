@@ -96,3 +96,4 @@ Before sending a data packet, the message must be encoded/formatted using the en
 | 2            | 1-2ms (<3ms)   | ~500ms        |
 
 _Latency-Drop-Time explained: Worst case scenario when the switch has overlapping requests or is overloaded (Worst Package-Respond-Time)._
+`PackageMaxSize` = 4096 bytes of string 
