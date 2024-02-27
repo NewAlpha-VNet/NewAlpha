@@ -19,7 +19,7 @@ class MissingAddressSetup(Exception):
         self.message = "The Address and Port was not defined. Setup the address data using VSwitch.setup(port, address) or VClient.setup(port, address)"
         super().__init__(self.message)
 
-class VSwitch:
+class AlphaSwitch:
     """
     Virtual-Switch (used to manage data flows)
 
@@ -30,17 +30,40 @@ class VSwitch:
     """
     switch_address: str = None 
     switch_port: int = 25505
+    _startlog = False
 
     def __init__(self) -> None:
         self.clients_data: dict = {} #Saves the address of every connected port (Port:Address)
         self.black_list: list = [] #Blacklist for non responding clients
+        self.log: list = [] #Saved logs
+        self.startlog_ = False
 
     def setup(self, port: int = None, address: str = None) -> None:
         """Change the address data of the switch."""
         if port is not None: self.switch_port = port
         if address is not None: self.switch_address = address
 
-    def handle(self) -> tuple[str, str, int, int, str]:
+    @classmethod
+    def startLog(cls) -> None:
+        """Start recording traffic and enable logging."""
+        cls._startlog = True
+
+    @classmethod
+    def stopLog(cls) -> None:
+        """Stop recording traffic and disable logging."""
+        cls._startlog = False
+
+    @property
+    def getNewestLog(self) -> str:
+        """Returns the newest recorded log."""
+        return str(self.log[-1])
+    
+    @property
+    def getFullLog(self) -> list:
+        """Returns the entire logging history."""
+        return self.log
+
+    def handleTraffic(self) -> tuple[str, str, int, int, str]:
         """
         Handles/Manages all data flow from clients.
         Return order: (response, sender_address, sender_port, recipient_port, decoded_data)
@@ -84,11 +107,11 @@ class VSwitch:
                     time.sleep(0.25)
 
             if response is None: 
-                response = f"{VSwitch.switch_port}:$E5 [NoResponse] 'The client has been disconnected or traffic could be high? (request-timeout?)':{sender_port}"
+                response = f"{AlphaSwitch.switch_port}:$E5 [NoResponse] 'The client has been disconnected or traffic could be high? (request-timeout?)':{sender_port}"
                 self.black_list.append(recipient_port) #Add to blacklist if not responding
                 if sum(1 for black_list_port in self.black_list if black_list_port == recipient_port) == 1 and recipient_port in self.clients_data.keys(): del self.clients_data[recipient_port] #remove the port from connections if port isn't responding 3 times
-        else: response = f"{VSwitch.switch_port}:$E4 [NotFound] 'This client is not connected to the network.':{sender_port}"
-        if int(recipient_port) == VSwitch.switch_port: response = f"{VSwitch.switch_port}:$R1 [Registered]:{sender_port}" #VClient.connect_to_switch() response
+        else: response = f"{AlphaSwitch.switch_port}:$E4 [NotFound] 'This client is not connected to the network.':{sender_port}"
+        if int(recipient_port) == AlphaSwitch.switch_port: response = f"{AlphaSwitch.switch_port}:$R1 [Registered]:{sender_port}" #VClient.connect_to_switch() response
         
         try: switch_socket.sendall(str(response).encode()) #return the respond from the recipient to original sender
         except ConnectionResetError: pass
@@ -96,9 +119,10 @@ class VSwitch:
         switch_socket.close()
         port_socket.close()
 
+        if AlphaSwitch._startlog: self.log.append(f"[Request/Response Transfer]\t{decoded_data} -> {response}") #Record log
         return (response, sender_address, sender_port, recipient_port, decoded_data)
 
-class VClient:
+class AlphaClient:
     """
     Virtual-Client (used to connect to other clients or switches). Use cases:
     - Server
@@ -123,7 +147,7 @@ class VClient:
         if port is not None: self.switch_port = port
         if address is not None: self.switch_address = address
 
-    def response_flag(self) -> None: 
+    def responseFlag(self) -> None: 
         """Kills the auto-response thread by using a flag."""
         self.flag_ = True
 
@@ -140,12 +164,12 @@ class VClient:
             except Exception: time.sleep(0.5)
         return None
 
-    def connect_to_switch(self) -> None:
+    def registerSwitch(self) -> None:
         """Establishes a connection to the switch in advance so that the switch can register the client."""
         if self.address_ is None or self.switch_address is None: raise MissingAddressSetup
         self.__sending_data__(port=self.switch_port, address=self.switch_address, data=f"{self.port_}:Register:{self.switch_port}")
 
-    def send(self, message: str, not_switch_port: int = None, not_switch_address: str = None) -> Union[tuple[str, int, int]]:
+    def request(self, message: str, not_switch_port: int = None, not_switch_address: str = None) -> Union[tuple[str, int, int]]:
         """
         Request a data packet and return the response from the request recipient (can be used for data trading).
         Return order: (response_data, sender_port, recipient_port)
@@ -175,7 +199,7 @@ class VClient:
         if port is None: port = self.switch_port
         return f"{self.port_}:{message}:{port}" #Format response (sPort:Message:rPort) 
     
-    def frozen_response(self, ruleset: dict, flag: bool = True) -> None:
+    def frozenResponse(self, ruleset: dict, flag: bool = True) -> None:
         """
         Automatically handles the client's response based on a specific predefined set of rules (dict).
         
@@ -203,7 +227,7 @@ class VClient:
                 port_socket.close()
             except Exception: pass
     
-    def dynamic_response(self, dyn_ruleset: dict, refresh_time: float) -> tuple[str, str, int]:
+    def dynamicResponse(self, dyn_ruleset: dict, refresh_time: float) -> tuple[str, str, int]:
         """
         Handles the client's response based on a specific dynamically changeable ruleset (dict).
         
@@ -234,7 +258,7 @@ class VClient:
         except Exception: return (None, None, None)
 
     #NOTE: Missing docs (WIP-Module)
-    def manual_request(self) -> str:
+    def manualRequest(self) -> str:
         """
         EXPERIMENTAL
 
@@ -260,7 +284,7 @@ class VClient:
             except Exception: pass
     
     #NOTE: Missing docs (WIP-Module)
-    def manual_response(self, response: str) -> None:
+    def manualResponse(self, response: str) -> None:
         """
         EXPERIMENTAL
 
