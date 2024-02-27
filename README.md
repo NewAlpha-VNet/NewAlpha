@@ -51,8 +51,8 @@ import threading
 def auto_respond():
   #key=request:value=response
   ruleset = {
-  "Request-String":"Response-String",
-  "Hi Flynn!":"Hi! How are you?"
+  "Hi Flynn!":"Hi! How are you?" 
+  }
   client.frozen_response(ruleset)
 
 auto_respond_thread = threading.Thread(target=auto_respond)
