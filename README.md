@@ -1,5 +1,6 @@
-# NewAlpha Framework
-An Easy to use Open-Source Virtual Networking Framework for Python. Including Switches and Clients/Servers.
+![](https://cdn.discordapp.com/attachments/810456487729168415/1212512760466907206/NewAlphaLogo.png?ex=65f21b81&is=65dfa681&hm=21c6a34591808cdc2dadb339dc9206f02109ea938df8752fb2163d643b28939a&)
+
+## An Easy to use Open-Source Virtual Networking Framework for Python. Including Switches and Clients/Servers.
 
 > [!NOTE] 
 > This framework is still in _Beta_ and may have malfunctions. In this case we would be happy to receive feedback.
