@@ -43,9 +43,6 @@ class AlphaSwitch:
         if port is not None: self.switch_port = port
         if address is not None: self.switch_address = address
 
-    def __clients_ports__(self): 
-        return list(self.clients_data.keys()) #returns connected ports only
-
     @classmethod
     def startLog(cls) -> None:
         """Start recording traffic and enable logging."""
