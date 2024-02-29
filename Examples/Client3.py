@@ -1,6 +1,6 @@
-import ImportPackage as ImportPackage
+import ImportPackage as NewAlpha
 
-client = ImportPackage.AlphaClient()
+client = NewAlpha.AlphaClient()
 client.setup(23456, "Your IP-Address")
 client.bridge(25505, "Your IP-Address")
 client.registerSwitch()
