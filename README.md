@@ -1,6 +1,6 @@
-![](https://cdn.discordapp.com/attachments/810456487729168415/1212512760466907206/NewAlphaLogo.png?ex=65f21b81&is=65dfa681&hm=21c6a34591808cdc2dadb339dc9206f02109ea938df8752fb2163d643b28939a&)
+![](https://cdn.discordapp.com/attachments/810456487729168415/1212791942379737210/NewAlphaLogoNEW.png?ex=65f31f83&is=65e0aa83&hm=7e9227058f23157a7face29c91cb5f55c48126205f040536966a6828ff6f4656&)
 
-## An Easy to use Open-Source Virtual Networking Framework for Python. Including Switches and Clients/Servers.
+***An Easy to use Open-Source Virtual Networking Framework for Python. Including Switches and Clients/Servers.***
 
 > [!NOTE] 
 > This framework is still in _Beta_ and may have malfunctions. In this case we would be happy to receive feedback.
