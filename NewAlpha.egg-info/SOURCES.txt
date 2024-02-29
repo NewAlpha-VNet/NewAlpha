@@ -1,0 +1,7 @@
+LICENSE
+README.md
+setup.py
+NewAlpha.egg-info/PKG-INFO
+NewAlpha.egg-info/SOURCES.txt
+NewAlpha.egg-info/dependency_links.txt
+NewAlpha.egg-info/top_level.txt
