@@ -3,9 +3,7 @@
 ***An Easy to use Open-Source Virtual Networking Framework for Python. Including Switches and Clients/Servers.***
 
 > [!NOTE] 
-> This framework is still in _Beta_ and may have malfunctions. In this case we would be happy to receive feedback.
-> 
-> _Upcoming: **The Alpha Update**_
+> This framework is in early _Beta_ and may have malfunctions. In this case we would be happy to receive feedback.
 
 ## Solution
 Offers a comprehensive networking solution designed to simplify the process of building and managing network infrastructures. With its user-friendly interface and pre-built infrastructure, NewAlpha eliminates the complexity of setting up networking systems. Whether for IoT applications or communication between virtual machines, NewAlpha provides a seamless experience, enabling users to easily change network configurations or manage logging systems for package tracing.
