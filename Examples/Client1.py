@@ -1,9 +1,9 @@
 import random
-import ImportPackage as ImportPackage
+import ImportPackage as NewAlpha
 import threading
 import time
 
-client = ImportPackage.AlphaClient()
+client = NewAlpha.AlphaClient()
 client.setup(34567, "Your IP-Address")
 client.bridge(25505, "Your IP-Address")
 client.registerSwitch()
