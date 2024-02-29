@@ -1,6 +1,6 @@
-import ImportPackage as ImportPackage
+import ImportPackage as NewAlpha
 
-virtual_switch = ImportPackage.AlphaSwitch()
+virtual_switch = NewAlpha.AlphaSwitch()
 virtual_switch.setup(port=25505, address="Your IP-Address")
 virtual_switch.startLog()
 
