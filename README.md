@@ -1,4 +1,9 @@
-![](https://cdn.discordapp.com/attachments/810456487729168415/1212791942379737210/NewAlphaLogoNEW.png?ex=65f31f83&is=65e0aa83&hm=7e9227058f23157a7face29c91cb5f55c48126205f040536966a6828ff6f4656&)
+![](https://cdn.discordapp.com/attachments/810456487729168415/1213249168034758726/readme_newalpha_latest_loho.png?ex=65f4c956&is=65e25456&hm=f85f7c5c886507f6c641659188a96231d47c2de36edc37c6afdf8cec6eab9e9e&)
+<a href="https://badge.fury.io/py/NewAlpha"><img src="https://badge.fury.io/py/NewAlpha.svg" alt="PyPI version" height="18"></a>
+<img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/NewAlpha">
+<img alt="GitHub License" src="https://img.shields.io/github/license/NewAlpha-VNet/NewAlpha">
+<img alt="GitHub commits since latest release" src="https://img.shields.io/github/commits-since/NewAlpha-VNet/NewAlpha/latest">
+
 
 ***An Easy to use Open-Source Virtual Networking Framework for Python. Including Switches and Clients/Servers.***
 
@@ -16,6 +21,7 @@ NewAlpha is based on the Socket library, and simplifies its use. Create a virtua
 Each packet contains three main components: the sender's port number, the message, parameter, or command being transmitted, and the receiver's port number. This format ensures clear identification of both the source and destination of each packet, along with the content being conveyed. For instance, a typical packet might appear as follows: '25505:Hello World!:80880,' where '25505' represents the sender's port, 'Hello World!' denotes the message or payload, and '80880' signifies the receiver's port. Every virtual object communicates with such structure.
 
 ## Usage and implementation
+Installing the latest version:
 ```cmd
 pip install NewAlpha
 ```
@@ -25,7 +31,7 @@ import NewAlpha
 ### Switch setup and traffic handling:
 ```python
 switch = NewAlpha.AlphaSwitch()
-switch.setup(port=25505, address="Your IP-Address") #Change Port and IP
+switch.switchSetup(port=25505, address="Your IP-Address") #Change Port and IP
 while True:
     switch.handleTraffic()
 ```
@@ -46,7 +52,7 @@ It's good to know that the log is stored as/in RAM.
 ### Client/Server setup:
 ```python
 client = NewAlpha.AlphaClient()
-client.setup(80880, "Your IP_Address") #Change Client's Port and IP
+client.clientSetup(80880, "Your IP_Address") #Change Client's Port and IP
 client.bridge(25505, "Switch IP_Address") #Enter the Switch Port and IP
 client.registerSwitch()
 ```
@@ -70,7 +76,7 @@ def auto_respond():
 auto_respond_thread = threading.Thread(target=auto_respond)
 auto_respond_thread.start()
 ```
-If you want to send messages while handling requests, you need threads. The _`frozenResponse()`_ method takes a set of rules as an argument to respond to a specific request with the correct answer. As the name suggests, the ruleset is frozen in a specific state, so there is no way to change it while the responding method processes it.
+If you want to send messages while handling requests, you need threads. The _`frozenResponse()`_ method takes a set of rules as an argument to respond to a specific request with the correct answer. As the name suggests, the ruleset is frozen in a specific state, so there is no way to change it while the responding method processes it. However, it is possible to stop this thread and the response loop by setting a flag using the _`responseFlag()`_ method.
 
 ***dynamicResponse():***
 ```python
