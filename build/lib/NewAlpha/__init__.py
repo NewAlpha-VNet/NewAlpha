@@ -1,7 +1,8 @@
-from newalpha import AlphaClient, AlphaSwitch
+# Classes
+from .newalpha import AlphaClient, AlphaSwitch
 
 # AlphaSwitch methods
-from newalpha import switchSetup, startLog, stopLog, getNewestLog, getFullLog, handleTraffic
+from .newalpha import AlphaSwitch
 
 # AlphaClient methods
-from newalpha import clientSetup, bridge, responseFlag, registerSwitch, request, encode_format, frozenResponse, dynamicResponse, confirmationResponse
+from .newalpha import AlphaClient

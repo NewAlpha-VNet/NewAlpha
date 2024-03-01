@@ -65,15 +65,15 @@ class AlphaSwitch:
         """Returns the entire logging history."""
         return self.log
 
-    def handleTraffic(self, cls) -> tuple[str, str, int, str, str, float]:
+    def handleTraffic(self) -> tuple[str, str, int, str, str, float]:
         """
         Handles/Manages all data flow from clients.
         Return order: (response, sender_address, sender_port, decoded_data, date_time, package_respond_time (in sec))
         """
-        if cls.switch_address is None: raise MissingAddressSetup 
+        if AlphaSwitch.switch_address is None: raise MissingAddressSetup 
 
         port_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        port_socket.bind((cls.switch_address, cls.switch_port))
+        port_socket.bind((AlphaSwitch.switch_address, AlphaSwitch.switch_port))
         port_socket.listen(1)
 
         switch_socket, address = port_socket.accept()
@@ -110,12 +110,12 @@ class AlphaSwitch:
                     time.sleep(0.25)
 
             if response is None: 
-                response = f"{cls.switch_port}:$E5 [NoResponse] 'The client has been disconnected or traffic could be high? (request-timeout?)':{sender_port}"
+                response = f"{AlphaSwitch.switch_port}:$E5 [NoResponse] 'The client has been disconnected or traffic could be high? (request-timeout?)':{sender_port}"
                 self.black_list.append(recipient_port) #Add to blacklist if not responding
                 if sum(1 for black_list_port in self.black_list if black_list_port == recipient_port) == 3 and recipient_port in self.clients_data.keys(): del self.clients_data[recipient_port] #remove the port from connections if port isn't responding 3 times
-        else: response = f"{cls.switch_port}:$E4 [NotFound] 'This client is not connected to the network.':{sender_port}"
-        if int(recipient_port) == cls.switch_port and str_data != "@all": response = f"{cls.switch_port}:$R1 [Registered]:{sender_port}" #AlphaClient.registerSwitch() response
-        if int(recipient_port) == cls.switch_port and str_data == "@all": response = f"{cls.switch_port}:{list(self.clients_data.keys())}:{sender_port}" #all connected ports response
+        else: response = f"{AlphaSwitch.switch_port}:$E4 [NotFound] 'This client is not connected to the network.':{sender_port}"
+        if int(recipient_port) == AlphaSwitch.switch_port and str_data != "@all": response = f"{AlphaSwitch.switch_port}:$R1 [Registered]:{sender_port}" #AlphaClient.registerSwitch() response
+        if int(recipient_port) == AlphaSwitch.switch_port and str_data == "@all": response = f"{AlphaSwitch.switch_port}:{list(self.clients_data.keys())}:{sender_port}" #all connected ports response
         
         try: switch_socket.sendall(str(response).encode()) #return the respond from the recipient to original sender
         except ConnectionResetError: pass
@@ -129,7 +129,7 @@ class AlphaSwitch:
         now = datetime.now()
         date_string = now.strftime("%d/%m/%Y %H:%M:%S")
 
-        if cls._startlog: self.log.append(f"{date_string} Package[{self.transfer_count}]: \t {decoded_data} \t -> ({elapsed_time}s) -> \t {response}") #Record log
+        if AlphaSwitch._startlog: self.log.append(f"{date_string} Package[{self.transfer_count}]: \t {decoded_data} \t -> ({elapsed_time}s) -> \t {response}") #Record log
         return (response, sender_address, sender_port, decoded_data, date_string, elapsed_time)
 
 class AlphaClient:
