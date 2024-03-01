@@ -1,13 +1,8 @@
 from setuptools import setup, find_packages
-import codecs
-import os
 
-here = os.path.abspath(os.path.dirname(__file__))
+long_description = open("./package_additions/pypi_README.md", "r").read()
 
-with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
-    long_description = "\n" + fh.read()
-
-VERSION = '1.0.0'
+VERSION = '1.0.1'
 DESCRIPTION = 'An Easy to use Open-Source Virtual Networking Framework for Python. Including Switches and Clients/Servers.'
 
 # Setting up
@@ -20,7 +15,7 @@ setup(
     long_description_content_type="text/markdown",
     long_description=long_description,
     packages=find_packages(),
-    install_requires=[],
+    install_requires=['datetime'],
     keywords=['python', 'iot', 'networking', 'socket', 'virtual-machine', 'server', 'switch', 'client', 'framework'],
     classifiers=[
         "Development Status :: 4 - Beta",

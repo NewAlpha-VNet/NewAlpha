@@ -1,7 +1,10 @@
 LICENSE
 README.md
 setup.py
+NewAlpha/__init__.py
+NewAlpha/newalpha.py
 NewAlpha.egg-info/PKG-INFO
 NewAlpha.egg-info/SOURCES.txt
 NewAlpha.egg-info/dependency_links.txt
+NewAlpha.egg-info/requires.txt
 NewAlpha.egg-info/top_level.txt

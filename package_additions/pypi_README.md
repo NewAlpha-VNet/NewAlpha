@@ -1,19 +1,3 @@
-Metadata-Version: 2.1
-Name: NewAlpha
-Version: 1.0.1
-Summary: An Easy to use Open-Source Virtual Networking Framework for Python. Including Switches and Clients/Servers.
-Author: NewAlpha-VNet
-Author-email: <newalpha.help@gmx.net>
-Keywords: python,iot,networking,socket,virtual-machine,server,switch,client,framework
-Classifier: Development Status :: 4 - Beta
-Classifier: Intended Audience :: Developers
-Classifier: Programming Language :: Python :: 3
-Classifier: Operating System :: Unix
-Classifier: Operating System :: MacOS :: MacOS X
-Classifier: Operating System :: Microsoft :: Windows
-Description-Content-Type: text/markdown
-License-File: LICENSE
-
 # NewAlpha Framework
 ***An Easy to use Open-Source Virtual Networking Framework for Python. Including Switches and Clients/Servers.***
 
