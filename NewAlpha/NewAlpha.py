@@ -13,6 +13,7 @@ Following classes are essential:
 import time
 import socket
 from typing import Union
+from datetime import datetime
 
 class MissingAddressSetup(Exception):
     def __init__(self) -> None:
@@ -63,10 +64,10 @@ class AlphaSwitch:
         """Returns the entire logging history."""
         return self.log
 
-    def handleTraffic(self) -> tuple[str, str, int, int, str]:
+    def handleTraffic(self) -> tuple[str, str, int, str, str, float]:
         """
         Handles/Manages all data flow from clients.
-        Return order: (response, sender_address, sender_port, recipient_port, decoded_data)
+        Return order: (response, sender_address, sender_port, decoded_data, date_time, package_respond_time (in sec))
         """
         if self.switch_address is None: raise MissingAddressSetup 
 
@@ -124,8 +125,11 @@ class AlphaSwitch:
         switch_socket.close()
         port_socket.close()
 
-        if AlphaSwitch._startlog: self.log.append(f"Package[{self.transfer_count}]: \t {decoded_data} \t -> ({elapsed_time}s) -> \t {response}") #Record log
-        return (response, sender_address, sender_port, recipient_port, decoded_data)
+        now = datetime.now()
+        date_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+        if AlphaSwitch._startlog: self.log.append(f"{date_string} Package[{self.transfer_count}]: \t {decoded_data} \t -> ({elapsed_time}s) -> \t {response}") #Record log
+        return (response, sender_address, sender_port, decoded_data, date_string, elapsed_time)
 
 class AlphaClient:
     """
