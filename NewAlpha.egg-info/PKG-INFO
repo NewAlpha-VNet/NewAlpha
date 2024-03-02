@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: NewAlpha
-Version: 1.0.21
+Version: 1.1.0
 Summary: An Easy to use Open-Source Virtual Networking Framework for Python. Including Switches and Clients/Servers.
 Author: NewAlpha-VNet
 Author-email: <newalpha.help@gmx.net>
@@ -14,8 +14,17 @@ Classifier: Operating System :: Microsoft :: Windows
 Description-Content-Type: text/markdown
 License-File: LICENSE
 
-# NewAlpha Framework
+![](https://cdn.discordapp.com/attachments/810456487729168415/1213250618014044210/readme_newalpha_latest_logo2.png?ex=65f4cab0&is=65e255b0&hm=34c108a00794df248ad1b94c42900c6b7aff435e69f901ecd64e3eedcd7e5c09&)
+<a href="https://badge.fury.io/py/NewAlpha"><img src="https://badge.fury.io/py/NewAlpha.svg" alt="PyPI version" height="18"></a>
+<img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/NewAlpha">
+<img alt="GitHub License" src="https://img.shields.io/github/license/NewAlpha-VNet/NewAlpha">
+<img alt="GitHub commits since latest release" src="https://img.shields.io/github/commits-since/NewAlpha-VNet/NewAlpha/latest">
+
+
 ***An Easy to use Open-Source Virtual Networking Framework for Python. Including Switches and Clients/Servers.***
+
+> [!NOTE] 
+> This framework is in early _Beta_ and may have malfunctions. In this case we would be happy to receive feedback.
 
 ## Solution
 Offers a comprehensive networking solution designed to simplify the process of building and managing network infrastructures. With its user-friendly interface and pre-built infrastructure, NewAlpha eliminates the complexity of setting up networking systems. Whether for IoT applications or communication between virtual machines, NewAlpha provides a seamless experience, enabling users to easily change network configurations or manage logging systems for package tracing.
@@ -28,6 +37,7 @@ NewAlpha is based on the Socket library, and simplifies its use. Create a virtua
 Each packet contains three main components: the sender's port number, the message, parameter, or command being transmitted, and the receiver's port number. This format ensures clear identification of both the source and destination of each packet, along with the content being conveyed. For instance, a typical packet might appear as follows: '25505:Hello World!:80880,' where '25505' represents the sender's port, 'Hello World!' denotes the message or payload, and '80880' signifies the receiver's port. Every virtual object communicates with such structure.
 
 ## Usage and implementation
+Installing the latest version:
 ```cmd
 pip install NewAlpha
 ```
@@ -37,7 +47,7 @@ import NewAlpha
 ### Switch setup and traffic handling:
 ```python
 switch = NewAlpha.AlphaSwitch()
-switch.setup(port=25505, address="Your IP-Address") #Change Port and IP
+switch.switchSetup(port=25505, address="Your IP-Address") #Change Port and IP
 while True:
     switch.handleTraffic()
 ```
@@ -58,7 +68,7 @@ It's good to know that the log is stored as/in RAM.
 ### Client/Server setup:
 ```python
 client = NewAlpha.AlphaClient()
-client.setup(80880, "Your IP_Address") #Change Client's Port and IP
+client.clientSetup(80880, "Your IP_Address") #Change Client's Port and IP
 client.bridge(25505, "Switch IP_Address") #Enter the Switch Port and IP
 client.registerSwitch()
 ```
@@ -82,7 +92,7 @@ def auto_respond():
 auto_respond_thread = threading.Thread(target=auto_respond)
 auto_respond_thread.start()
 ```
-If you want to send messages while handling requests, you need threads. The _`frozenResponse()`_ method takes a set of rules as an argument to respond to a specific request with the correct answer. As the name suggests, the ruleset is frozen in a specific state, so there is no way to change it while the responding method processes it.
+If you want to send messages while handling requests, you need threads. The _`frozenResponse()`_ method takes a set of rules as an argument to respond to a specific request with the correct answer. As the name suggests, the ruleset is frozen in a specific state, so there is no way to change it while the responding method processes it. However, it is possible to stop this thread and the response loop by setting a flag using the _`responseFlag()`_ method.
 
 ***dynamicResponse():***
 ```python
@@ -110,7 +120,7 @@ auto_respond_thread.start()
 This method was specifically designed to enable dynamic context-based exchanges. What does that mean? In short, you could for example use it to create a chat application. If you want to respond to a request tailored to the message you receive, you can set up a system so you have enough time to respond. However, the method itself always responds with the save confirmation message.
 
 ### Client/Server request:
-The following method is the only way to request packages to any recipient. You don't always have to send it directly to the switch, you can also use it to transfer data to other networks (Then no encoding of the message is required).
+To request data packets, you can use either the _`request()`_ method or the _`generalRequest()`_ method. The only difference is that the general request method sends a message to all connected clients on the switch and the other method sends only a request to a specific connected client.
 
 ***request():***
 ```python
@@ -118,7 +128,14 @@ def send_package():
   encoded_message = client.encode_format("Hi Flynn!", 70770) #Message, ReceiverPort
   response, port, address = client.request(message=encoded_message)
 ```
-Before sending a data packet, the message must be encoded/formatted using the encode_format() method. As mentioned before into the following form: `25505:Hi Flynn!:70770`.
+Before sending a data packet, the message must be encoded/formatted using the encode_format() method. As mentioned before into the following form: `25505:Hi Flynn!:70770`. You don't always have to send it directly to the switch, you can also use it to transfer data to other networks (Then no encoding of the message is required).
+
+***generalRequest():***
+```python
+response_list = client.generalRequest(message="Hi Flynn!")
+```
+The general request method does not require an encrypted message as an argument due to the different ports the client needs to send to. It is important to know that sending the request is done serially and not parallel with threads. Therefore it may take a while for the response to arrive.
+
 ## Benchmark
 > Average Benchmark Results (for the constant package sending pause of 10ms).
 
@@ -130,10 +147,17 @@ Before sending a data packet, the message must be encoded/formatted using the en
 
 _Latency-Drop-Time explained: Worst case scenario when the switch has overlapping requests or is overloaded (Worst Package-Respond-Time)._
 
-### Additional Informations:
+### Additional information:
 
 `PackageMaxSize` = 4096 bytes of string (Maximum message size)
 
 `PortsDigitsLength` = min/max 5 digits
 
 `MaxPortsRange` = 10000 up to 65535 (Ports are only permitted in this range)
+
+## Further configurations
+
+During a data transaction, if a client that normally responds to requests is offline due to complications and the other ports are not informed and still send requests to that port, these clients will receive a 
+"NoResponse" error. By default, this error occurs twice until the offline client is blacklisted. Therefore, no one can make a request to this machine. The client is removed from the blacklist when it communicates 
+with the switch. Such tolerances can be changed using the _`setToleration()`_ method, which accepts an amount as an argument. (This type of response error can also occur when the client is overloaded with 
+requests.)

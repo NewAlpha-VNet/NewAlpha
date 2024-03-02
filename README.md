@@ -104,7 +104,7 @@ auto_respond_thread.start()
 This method was specifically designed to enable dynamic context-based exchanges. What does that mean? In short, you could for example use it to create a chat application. If you want to respond to a request tailored to the message you receive, you can set up a system so you have enough time to respond. However, the method itself always responds with the save confirmation message.
 
 ### Client/Server request:
-The following method is the only way to request packages to any recipient. You don't always have to send it directly to the switch, you can also use it to transfer data to other networks (Then no encoding of the message is required).
+To request data packets, you can use either the _`request()`_ method or the _`generalRequest()`_ method. The only difference is that the general request method sends a message to all connected clients on the switch and the other method sends only a request to a specific connected client.
 
 ***request():***
 ```python
@@ -112,7 +112,14 @@ def send_package():
   encoded_message = client.encode_format("Hi Flynn!", 70770) #Message, ReceiverPort
   response, port, address = client.request(message=encoded_message)
 ```
-Before sending a data packet, the message must be encoded/formatted using the encode_format() method. As mentioned before into the following form: `25505:Hi Flynn!:70770`.
+Before sending a data packet, the message must be encoded/formatted using the encode_format() method. As mentioned before into the following form: `25505:Hi Flynn!:70770`. You don't always have to send it directly to the switch, you can also use it to transfer data to other networks (Then no encoding of the message is required).
+
+***generalRequest():***
+```python
+response_list = client.generalRequest(message="Hi Flynn!")
+```
+The general request method does not require an encrypted message as an argument due to the different ports the client needs to send to. It is important to know that sending the request is done serially and not parallel with threads. Therefore it may take a while for the response to arrive.
+
 ## Benchmark
 > Average Benchmark Results (for the constant package sending pause of 10ms).
 
@@ -124,10 +131,17 @@ Before sending a data packet, the message must be encoded/formatted using the en
 
 _Latency-Drop-Time explained: Worst case scenario when the switch has overlapping requests or is overloaded (Worst Package-Respond-Time)._
 
-### Additional Informations:
+### Additional information:
 
 `PackageMaxSize` = 4096 bytes of string (Maximum message size)
 
 `PortsDigitsLength` = min/max 5 digits
 
 `MaxPortsRange` = 10000 up to 65535 (Ports are only permitted in this range)
+
+## Further configurations
+
+During a data transaction, if a client that normally responds to requests is offline due to complications and the other ports are not informed and still send requests to that port, these clients will receive a 
+"NoResponse" error. By default, this error occurs twice until the offline client is blacklisted. Therefore, no one can make a request to this machine. The client is removed from the blacklist when it communicates 
+with the switch. Such tolerances can be changed using the _`setToleration()`_ method, which accepts an amount as an argument. (This type of response error can also occur when the client is overloaded with 
+requests.)

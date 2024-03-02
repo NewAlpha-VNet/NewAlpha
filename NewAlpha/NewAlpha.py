@@ -32,6 +32,7 @@ class AlphaSwitch:
     switch_address: str = None 
     switch_port: int = 25505
     _startlog = False
+    blacklist_count = 2 #How many times a connection can not respond before it is blacklisted
 
     def __init__(self) -> None:
         self.transfer_count: int = 0 #Counts the amount of packages handled
@@ -54,6 +55,14 @@ class AlphaSwitch:
     def stopLog(cls) -> None:
         """Stop recording traffic and disable logging."""
         cls._startlog = False
+
+    @classmethod
+    def setToleration(cls, toleration: int) -> None:
+        """
+        Change the number of times a client cannot respond until they are blacklisted.
+        Standard: 2
+        """
+        cls.blacklist_count = toleration
 
     @property
     def getNewestLog(self) -> str:
@@ -112,10 +121,15 @@ class AlphaSwitch:
             if response is None: 
                 response = f"{AlphaSwitch.switch_port}:$E5 [NoResponse] 'The client has been disconnected or traffic could be high? (request-timeout?)':{sender_port}"
                 self.black_list.append(recipient_port) #Add to blacklist if not responding
-                if sum(1 for black_list_port in self.black_list if black_list_port == recipient_port) == 3 and recipient_port in self.clients_data.keys(): del self.clients_data[recipient_port] #remove the port from connections if port isn't responding 3 times
+                if sum(1 for black_list_port in self.black_list if black_list_port == recipient_port) == AlphaSwitch.blacklist_count and recipient_port in self.clients_data.keys(): del self.clients_data[recipient_port] #remove the port from connections if port isn't responding 3 times
         else: response = f"{AlphaSwitch.switch_port}:$E4 [NotFound] 'This client is not connected to the network.':{sender_port}"
-        if int(recipient_port) == AlphaSwitch.switch_port and str_data != "@all": response = f"{AlphaSwitch.switch_port}:$R1 [Registered]:{sender_port}" #AlphaClient.registerSwitch() response
-        if int(recipient_port) == AlphaSwitch.switch_port and str_data == "@all": response = f"{AlphaSwitch.switch_port}:{list(self.clients_data.keys())}:{sender_port}" #all connected ports response
+        if int(recipient_port) == AlphaSwitch.switch_port and str_data != "@all __port__": response = f"{AlphaSwitch.switch_port}:$R1 [Registered]:{sender_port}" #AlphaClient.registerSwitch() response
+        if int(recipient_port) == AlphaSwitch.switch_port and str_data == "@all __port__": #return connected port list without brackets. Example: 25505, 80800, 55420
+            port_list_str = ""
+            for index, port_ in enumerate(list(self.clients_data.keys())):
+                if index == 0: port_list_str = str(port_)
+                else: port_list_str = f"{port_list_str}, {port_}"
+            response = f"{AlphaSwitch.switch_port}:{port_list_str}:{sender_port}" #all connected ports response
         
         try: switch_socket.sendall(str(response).encode()) #return the respond from the recipient to original sender
         except ConnectionResetError: pass
@@ -184,7 +198,7 @@ class AlphaClient:
         @specific
         
         Requests a data packet and returns the response from the request recipient (can be used for data trading).
-        Return order: (response_data, sender_port, recipient_port)
+        Return order: (response_data, sender_port)
         """
         if self.address_ is None or self.switch_address is None: raise MissingAddressSetup
         if not_switch_port is None: not_switch_port = self.switch_port 
@@ -202,6 +216,24 @@ class AlphaClient:
             return (str_data, sender_port)
         else:
             return (None, None)
+        
+    def generalRequest(self, message: str) -> list[tuple[str, int]]:
+        """
+        @all
+
+        Requests data packets for each connected client and returns all responses from the requested clients (can be used for data trading).
+        *Note: Sending requests is serial and can be slow (not every recipient receives the message at the same time).*
+        Return: [(response_data, sender_port), ...]
+        """
+        port_response, _1 = self.request(f"{self.port_}:@all __port__:{self.switch_port}") #requests all connected-ports from switch
+        connected_port = list(map(int, port_response.split(", "))) #converts connected-port response to list of int ports
+        
+        return_structure = []
+        for port in connected_port:
+            if port != self.port_:
+                response, sender_port = self.request(message=f"{self.port_}:{message}:{port}")
+                return_structure.append((response, sender_port))
+        return return_structure
         
     def encode_format(self, message: str, port: int = None) -> str: 
         """
@@ -242,7 +274,8 @@ class AlphaClient:
     def dynamicResponse(self, dyn_ruleset: dict, refresh_time: float) -> tuple[str, str, int]:
         """
         Handles the client's response based on a specific dynamically changeable ruleset (dict).
-        
+        Return order: (request_data, response_data, sender_port)
+
         ruleset = {
             request:response
             (key):(value)
@@ -272,7 +305,7 @@ class AlphaClient:
     def confirmationResponse(self, confirmation_message: str) -> tuple[str, int]:
         """
         Returns the received request data and responds with a arrival confirmation.
-        Return order: (Message, Sender_Port)
+        Return order: (message, sender_port)
         """
         if self.address_ is None or self.switch_address is None: raise MissingAddressSetup
         while True:
