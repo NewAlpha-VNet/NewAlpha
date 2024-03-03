@@ -3,7 +3,9 @@
 <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/NewAlpha">
 <img alt="GitHub License" src="https://img.shields.io/github/license/NewAlpha-VNet/NewAlpha">
 <img alt="GitHub commits since latest release" src="https://img.shields.io/github/commits-since/NewAlpha-VNet/NewAlpha/latest">
-
+<img alt="Libraries.io dependency status for latest release" src="https://img.shields.io/librariesio/release/pypi/NewAlpha">
+<img alt="Libraries.io SourceRank" src="https://img.shields.io/librariesio/sourcerank/pypi/NewAlpha">
+<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/NewAlpha-VNet/NewAlpha">
 
 ***An Easy to use Open-Source Virtual Networking Framework for Python. Including Switches and Clients/Servers.***
 
