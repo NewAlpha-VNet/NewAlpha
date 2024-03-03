@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 long_description = open("README.md", "r").read()
 
-VERSION = '1.1.0'
+VERSION = '1.1.1'
 DESCRIPTION = 'An Easy to use Open-Source Virtual Networking Framework for Python. Including Switches and Clients/Servers.'
 
 # Setting up

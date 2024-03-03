@@ -141,7 +141,12 @@ _Latency-Drop-Time explained: Worst case scenario when the switch has overlappin
 
 ## Further configurations
 
+### Blacklist toleration
 During a data transaction, if a client that normally responds to requests is offline due to complications and the other ports are not informed and still send requests to that port, these clients will receive a 
 "NoResponse" error. By default, this error occurs twice until the offline client is blacklisted. Therefore, no one can make a request to this machine. The client is removed from the blacklist when it communicates 
 with the switch. Such tolerances can be changed using the _`setToleration()`_ method, which accepts an amount as an argument. (This type of response error can also occur when the client is overloaded with 
 requests.)
+
+### Byte size
+By default, the maximum capacity of a message containing a string is 4096 bytes. For larger data transfers, you can change this byte size using the _`setByteSizeSwitch`_ or _`setByteSizeClient`_ method, which 
+accepts an integer as an argument.

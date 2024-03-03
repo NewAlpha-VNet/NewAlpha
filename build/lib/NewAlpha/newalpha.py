@@ -29,10 +29,12 @@ class AlphaSwitch:
     >>> while True:
     >>>     virtual_switch.handleTraffic()
     """
+
     switch_address: str = None 
     switch_port: int = 25505
-    _startlog = False
-    blacklist_count = 2 #How many times a connection can not respond before it is blacklisted
+    _startlog: bool = False
+    _blacklist_count: int  = 2 #How many times a connection can not respond before it is blacklisted
+    _byte_size: int = 4096 #Maximum amount of bytes a message can contain
 
     def __init__(self) -> None:
         self.transfer_count: int = 0 #Counts the amount of packages handled
@@ -62,7 +64,15 @@ class AlphaSwitch:
         Change the number of times a client cannot respond until they are blacklisted.
         Standard: 2
         """
-        cls.blacklist_count = toleration
+        cls._blacklist_count = toleration
+
+    @classmethod
+    def setByteSizeSwitch(cls, byte_size: int) -> None:
+        """
+        Change the maximum amount of bytes a message can contain.
+        Standard: 4096
+        """
+        cls._byte_size = byte_size
 
     @property
     def getNewestLog(self) -> str:
@@ -87,7 +97,7 @@ class AlphaSwitch:
 
         switch_socket, address = port_socket.accept()
         start_handle_time = time.time()
-        decoded_data = str(switch_socket.recv(4096).decode()) #Raw data (sPORT:Message:rPORT)
+        decoded_data = str(switch_socket.recv(AlphaSwitch._byte_size).decode()) #Raw data (sPORT:Message:rPORT)
 
         sender_port, recipient_port, str_data = (
             int(decoded_data[:5]),
@@ -109,7 +119,7 @@ class AlphaSwitch:
                     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     client_socket.connect((sender_address, recipient_port))
                     client_socket.sendall(decoded_data.encode())
-                    message_response = client_socket.recv(4096).decode()
+                    message_response = client_socket.recv(AlphaSwitch._byte_size).decode()
                     client_socket.close()
                     response = f"{recipient_port}:{message_response}:{sender_port}" #Format response (sPort:Message:rPort) 
                     while recipient_port in self.black_list: self.black_list.remove(recipient_port) #Remove port from blacklist if port is responding
@@ -121,7 +131,7 @@ class AlphaSwitch:
             if response is None: 
                 response = f"{AlphaSwitch.switch_port}:$E5 [NoResponse] 'The client has been disconnected or traffic could be high? (request-timeout?)':{sender_port}"
                 self.black_list.append(recipient_port) #Add to blacklist if not responding
-                if sum(1 for black_list_port in self.black_list if black_list_port == recipient_port) == AlphaSwitch.blacklist_count and recipient_port in self.clients_data.keys(): del self.clients_data[recipient_port] #remove the port from connections if port isn't responding 3 times
+                if sum(1 for black_list_port in self.black_list if black_list_port == recipient_port) == AlphaSwitch._blacklist_count and recipient_port in self.clients_data.keys(): del self.clients_data[recipient_port] #remove the port from connections if port isn't responding 3 times
         else: response = f"{AlphaSwitch.switch_port}:$E4 [NotFound] 'This client is not connected to the network.':{sender_port}"
         if int(recipient_port) == AlphaSwitch.switch_port and str_data != "@all __port__": response = f"{AlphaSwitch.switch_port}:$R1 [Registered]:{sender_port}" #AlphaClient.registerSwitch() response
         if int(recipient_port) == AlphaSwitch.switch_port and str_data == "@all __port__": #return connected port list without brackets. Example: 25505, 80800, 55420
@@ -152,6 +162,9 @@ class AlphaClient:
     - Server
     - Client 
     """
+
+    _byte_size_client: int = 4096 #Maximum amount of bytes a message can contain
+
     def __init__(self) -> None:
         self.address_: str = None #Client address
         self.port_: int = 14606 #Client port
@@ -174,6 +187,14 @@ class AlphaClient:
     def responseFlag(self) -> None: 
         """Kills the auto-response thread by using a flag."""
         self.flag_ = True
+    
+    @classmethod
+    def setByteSizeClient(cls, byte_size: int) -> None:
+        """
+        Change the maximum amount of bytes a message can contain.
+        Standard: 4096
+        """
+        cls._byte_size_client = byte_size
 
     @staticmethod
     def __sending_data__(port: int, address: str, data: str) -> Union[str, None]:
@@ -182,7 +203,7 @@ class AlphaClient:
                 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 client_socket.connect((address, port))
                 client_socket.sendall(data.encode())
-                response: str = str(client_socket.recv(4096).decode()) #Raw data (sPort:Message:rPort)
+                response: str = str(client_socket.recv(AlphaClient._byte_size_client).decode()) #Raw data (sPort:Message:rPort)
                 client_socket.close()
                 return response
             except Exception: time.sleep(0.5)
@@ -260,7 +281,7 @@ class AlphaClient:
                 port_socket.listen(1)
 
                 switch_socket, address = port_socket.accept()
-                decoded_data = str(switch_socket.recv(4096).decode()) #Raw data (sPort:Message:rPort)
+                decoded_data = str(switch_socket.recv(AlphaClient._byte_size_client).decode()) #Raw data (sPort:Message:rPort)
 
                 str_data = decoded_data[6:-6] #Message only from raw data
                 if str_data in ruleset.keys(): response = ruleset[str_data] #set response to value from ruleset key
@@ -289,7 +310,7 @@ class AlphaClient:
             port_socket.listen(1)
 
             switch_socket, address = port_socket.accept()
-            decoded_data = str(switch_socket.recv(4096).decode()) #Raw data (sPort:Message:rPort)
+            decoded_data = str(switch_socket.recv(AlphaClient._byte_size_client).decode()) #Raw data (sPort:Message:rPort)
 
             sender_port = int(decoded_data[:5])
             str_data = decoded_data[6:-6]  #Message only from raw data
@@ -315,7 +336,7 @@ class AlphaClient:
                 port_socket.listen(1)
 
                 switch_socket, address = port_socket.accept()
-                decoded_data = str(switch_socket.recv(4096).decode()) #Raw data (sPort:Message:rPort)
+                decoded_data = str(switch_socket.recv(AlphaClient._byte_size_client).decode()) #Raw data (sPort:Message:rPort)
 
                 if decoded_data is not None:
                     sender_port, recipient_port, str_data = (
