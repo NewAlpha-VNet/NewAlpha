@@ -154,3 +154,8 @@ requests.)
 ### Byte size
 By default, the maximum capacity of a message containing a string is 4096 bytes. For larger data transfers, you can change this byte size using the _`setByteSizeSwitch`_ or _`setByteSizeClient`_ method, which 
 accepts an integer as an argument.
+
+## Security and License
+https://github.com/NewAlpha-VNet/NewAlpha?tab=security-ov-file
+
+https://github.com/NewAlpha-VNet/NewAlpha?tab=MIT-1-ov-file
