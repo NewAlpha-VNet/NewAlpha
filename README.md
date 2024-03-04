@@ -1,4 +1,5 @@
-![](https://cdn.discordapp.com/attachments/810456487729168415/1213250618014044210/readme_newalpha_latest_logo2.png?ex=65f4cab0&is=65e255b0&hm=34c108a00794df248ad1b94c42900c6b7aff435e69f901ecd64e3eedcd7e5c09&)
+![](https://cdn.discordapp.com/attachments/810456487729168415/1214283645569736754/newalphalogoBEST.png?ex=65f88cc5&is=65e617c5&hm=a974f082453ba8a47a3b6552211f6b7c39d974d8bc8efeeb916cc86a16c07476&)
+
 <a href="https://badge.fury.io/py/NewAlpha"><img src="https://badge.fury.io/py/NewAlpha.svg" alt="PyPI version" height="18"></a>
 <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/NewAlpha">
 <img alt="GitHub License" src="https://img.shields.io/github/license/NewAlpha-VNet/NewAlpha">
