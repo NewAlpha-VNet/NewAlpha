@@ -1,8 +1,4 @@
-
-# NewAlpha Framework
-<!---
-![](https://private-user-images.githubusercontent.com/126905156/316652189-e6d77ec4-b11a-4354-89e9-6c547fc3bb59.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTE0MDA1ODgsIm5iZiI6MTcxMTQwMDI4OCwicGF0aCI6Ii8xMjY5MDUxNTYvMzE2NjUyMTg5LWU2ZDc3ZWM0LWIxMWEtNDM1NC04OWU5LTZjNTQ3ZmMzYmI1OS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwMzI1JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDMyNVQyMDU4MDhaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1lODg4NjhmNjk1NTg5NjgyZjVhMTkxNjllMDUxN2Y4MmViNDFjNjAwM2NmM2VhMGIxNWYzYjk0ZGFjY2YyZmZkJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.DU0FTepJe12DOAby6zO_L4K7Tf-rsUyGvtyOG8dLSPY)
--->
+![](https://github.com/NewAlpha-VNet/NewAlpha/blob/main/newAlphaBanner.png?raw=true)
 
 <a href="https://badge.fury.io/py/NewAlpha"><img src="https://badge.fury.io/py/NewAlpha.svg" alt="PyPI version" height="18"></a>
 <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/NewAlpha">
