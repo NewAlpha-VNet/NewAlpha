@@ -1,4 +1,5 @@
-![](https://github.com/NewAlpha-VNet/NewAlpha/blob/main/newAlphaBanner.png?raw=true)
+![image](https://github.com/user-attachments/assets/bb410100-2849-43dd-83ce-fd23df7ea61b)
+
 
 <a href="https://badge.fury.io/py/NewAlpha"><img src="https://badge.fury.io/py/NewAlpha.svg" alt="PyPI version" height="18"></a>
 <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/NewAlpha">
